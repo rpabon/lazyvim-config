@@ -1,5 +1,9 @@
 return {
-  { "tpope/vim-fugitive" },
+  -- Git plugin
+  -- { "tpope/vim-fugitive" },
+  --
+  -- -- Surrand plugin like in VSCode
+  -- { "tpope/vim-surround" },
 
   -- Git line blame
   {
@@ -36,15 +40,19 @@ return {
       dashboard = {
         preset = {
           header = [[
-                  _                 
-                 | |                
- _ __ _ __   __ _| |__   ___  _ __  
-| '__| '_ \ / _` | '_ \ / _ \| '_ \ 
-| |  | |_) | (_| | |_) | (_) | | | |
-|_|  | .__/ \__,_|_.__/ \___/|_| |_|
-     | |                            
-     |_|                            
-          ]],
+                             __                         
+                            |  \                        
+   ______   ______   ______ | ▓▓____   ______  _______  
+  /      \ /      \ |      \| ▓▓    \ /      \|       \ 
+ |  ▓▓▓▓▓▓\  ▓▓▓▓▓▓\ \▓▓▓▓▓▓\ ▓▓▓▓▓▓▓\  ▓▓▓▓▓▓\ ▓▓▓▓▓▓▓\
+ | ▓▓   \▓▓ ▓▓  | ▓▓/      ▓▓ ▓▓  | ▓▓ ▓▓  | ▓▓ ▓▓  | ▓▓
+ | ▓▓     | ▓▓__/ ▓▓  ▓▓▓▓▓▓▓ ▓▓__/ ▓▓ ▓▓__/ ▓▓ ▓▓  | ▓▓
+ | ▓▓     | ▓▓    ▓▓\▓▓    ▓▓ ▓▓    ▓▓\▓▓    ▓▓ ▓▓  | ▓▓
+  \▓▓     | ▓▓▓▓▓▓▓  \▓▓▓▓▓▓▓\▓▓▓▓▓▓▓  \▓▓▓▓▓▓ \▓▓   \▓▓
+          | ▓▓                                          
+          | ▓▓                                          
+           \▓▓                                          
+         ]],
         },
       },
     },
@@ -66,7 +74,7 @@ return {
     {
       "OlegGulevskyy/better-ts-errors.nvim",
       dependencies = { "MunifTanjim/nui.nvim" },
-      config = {
+      opt = {
         keymaps = {
           toggle = "<leader>dd", -- default '<leader>dd'
           go_to_definition = "<leader>dx", -- default '<leader>dx'

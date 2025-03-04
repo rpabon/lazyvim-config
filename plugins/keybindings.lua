@@ -28,7 +28,7 @@ end
 -- Function to confirm Git reset buffer
 local function confirm_git_reset_buffer()
   local file_name = get_current_file_name()
-  vim.ui.input({ prompt = "Git reset " .. file_name .. "? (y/n): " }, function(input)
+  vim.ui.input({ prompt = "Do you want to Git reset " .. file_name .. "? (y/n): " }, function(input)
     if input == "y" then
       vim.cmd("Gitsigns reset_buffer")
     end
@@ -45,7 +45,7 @@ wk.add({
   },
   {
     -- Keybinding for resetting the current Git buffer with confirmation
-    "<leader>gr",
+    "<leader>gR",
     confirm_git_reset_buffer,
     desc = "Git reset file",
     mode = "n",
@@ -55,6 +55,33 @@ wk.add({
     "<leader>gD",
     compare_to_branch,
     desc = "Git diff (branch)",
+    mode = "n",
+  },
+  {
+    -- Keybinding for adding the current file to Git
+    "<leader>gA",
+    "<cmd>Gitsigns stage_buffer<cr>",
+    desc = "Git add file",
+    mode = "n",
+  },
+  {
+    -- Keybinding for committing changes with Gitsigns
+    "<leader>gC",
+    function()
+      vim.ui.input({ prompt = "Enter commit message: " }, function(input)
+        if input then
+          vim.cmd('G commit -m "' .. input .. '"')
+        end
+      end)
+    end,
+    desc = "Git commit",
+    mode = "n",
+  },
+  {
+    -- Keybinding for pushing the current branch with Fugitive
+    "<leader>gP",
+    "<cmd>Git push<cr>",
+    desc = "Git push",
     mode = "n",
   },
 })
