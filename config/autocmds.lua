@@ -7,17 +7,22 @@
 -- Or remove existing autocmds by their group name (which is prefixed with `lazyvim_` for the defaults)
 -- e.g. vim.api.nvim_del_augroup_by_name("lazyvim_wrap_spell")
 
+local function auto_save()
+  -- Check if the file is writable and has unsaved changes
+  if vim.fn.filewritable(vim.fn.expand("%")) == 1 and vim.bo.modified then
+    vim.cmd("silent! write")
+    vim.notify("Changes on " .. vim.fn.expand("%:t") .. " saved", vim.log.levels.INFO)
+  end
+end
+
 -- Autocmd to save the file when focus is lost
 vim.api.nvim_create_autocmd("FocusLost", {
-  callback = function()
-    -- Check if the file is writable and has unsaved changes
-    if vim.fn.filewritable(vim.fn.expand("%")) == 1 and vim.bo.modified then
-      -- Save the file silently
-      vim.cmd("silent! write")
-      -- Notify the user that changes have been saved
-      vim.notify("Changes on " .. vim.fn.expand("%:t") .. " saved", vim.log.levels.INFO)
-    end
-  end,
+  callback = auto_save,
+})
+
+-- Autocmd to save the file when buffer changes
+vim.api.nvim_create_autocmd("BufLeave", {
+  callback = auto_save,
 })
 
 -- Autocmd to enable the blame line when a buffer is entered

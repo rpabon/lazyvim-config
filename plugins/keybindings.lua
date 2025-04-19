@@ -1,87 +1,161 @@
 local wk = require("which-key")
 
--- Function to get a list of all Git branches
-local function get_git_branches()
-  -- Run the git command to list all branches and return the result as a list
-  local branches = vim.fn.systemlist("git branch --all --format='%(refname:short)'")
-  return branches
-end
-
--- Function to compare the current branch with a selected branch
-local function compare_to_branch()
-  -- Get the list of branches
-  local branches = get_git_branches()
-  -- Use vim.ui.select to prompt the user to select a branch from the list
-  vim.ui.select(branches, { prompt = "Select branch:" }, function(branch_name)
-    if branch_name then
-      -- Run the Gvdiffsplit command with the selected branch name
-      vim.cmd("Gvdiffsplit " .. branch_name)
-    end
-  end)
-end
-
--- Function to get the current file name
-local function get_current_file_name()
-  return vim.fn.expand("%:t")
-end
-
--- Function to confirm Git reset buffer
-local function confirm_git_reset_buffer()
-  local file_name = get_current_file_name()
-  vim.ui.input({ prompt = "Do you want to Git reset " .. file_name .. "? (y/n): " }, function(input)
-    if input == "y" then
-      vim.cmd("Gitsigns reset_buffer")
-    end
-  end)
-end
-
 wk.add({
   {
-    -- Keybinding for finding all files, including hidden files
+    "<leader>bt",
+    "<cmd>b#<cr>",
+    desc = "Restore last closed buffer",
+    mode = "n",
+  },
+
+  -- Insert Empty Line
+  {
+    "<leader>i",
+    group = "Insert Line",
+    icon = "󰇘",
+  },
+  {
+    "<leader>ia",
+    "O<Esc>",
+    desc = "Insert Empty Line Above",
+    mode = "n",
+  },
+  {
+    "<leader>ib",
+    "o<Esc>",
+    desc = "Insert Empty Line Below",
+    mode = "n",
+  },
+
+  -- Code Minimap
+  {
+    "<leader>m",
+    group = "Minimap",
+    icon = "󰦄",
+  },
+  {
+    "<leader>mm",
+    "<cmd>Neominimap bufToggle<cr>",
+    desc = "Toggle Minimap",
+    mode = "n",
+  },
+  {
+    "<leader>mr",
+    "<cmd>Neominimap bufRefresh<cr>",
+    desc = "Refresh Minimap",
+    mode = "n",
+  },
+  {
+    "<leader>mf",
+    "<cmd>Neominimap focus<cr>",
+    desc = "Focus Minimap",
+    mode = "n",
+  },
+  {
+    "<leader>mu",
+    "<cmd>Neominimap unfocus<cr>",
+    desc = "Unfocus Minimap",
+    mode = "n",
+  },
+
+  -- Telescope
+  {
     "<leader>fa",
-    "<cmd>Telescope find_files no_ignore=true hidden=true<cr>",
-    desc = "Find all files",
+    "<cmd>Telescope find_files hidden=true no_ignore=true<cr>",
+    desc = "Find all (hidden & ignored)",
+    icon = "",
     mode = "n",
   },
   {
-    -- Keybinding for resetting the current Git buffer with confirmation
-    "<leader>gR",
-    confirm_git_reset_buffer,
-    desc = "Git reset file",
+    "<leader>,",
+    "<cmd>Telescope buffers sort_lastused=true ignore_current_buffer=true<cr>",
+    desc = "Buffer List",
     mode = "n",
   },
+
+  --  Console Log
   {
-    -- Keybinding for comparing the current branch to another branch
-    "<leader>gD",
-    compare_to_branch,
-    desc = "Git diff (branch)",
-    mode = "n",
+    "<leader>v",
+    group = "Console Log",
+    icon = "󱂅",
   },
   {
-    -- Keybinding for adding the current file to Git
-    "<leader>gA",
-    "<cmd>Gitsigns stage_buffer<cr>",
-    desc = "Git add file",
-    mode = "n",
-  },
-  {
-    -- Keybinding for committing changes with Gitsigns
-    "<leader>gC",
+    "<leader>vl",
     function()
-      vim.ui.input({ prompt = "Enter commit message: " }, function(input)
-        if input then
-          vim.cmd('G commit -m "' .. input .. '"')
+      require("chainsaw").variableLog()
+    end,
+    desc = "Variable Log (Chainsaw)",
+    mode = "n",
+  },
+  {
+    "<leader>vo",
+    function()
+      require("chainsaw").objectLog()
+    end,
+    desc = "Object Log (Chainsaw)",
+    mode = "n",
+  },
+
+  -- Keybinding for vertical diffing the current branch with another branch
+  {
+    "<leader>ghC",
+    function()
+      local branches = vim.fn.systemlist("git branch --all --format='%(refname:short)'")
+      vim.ui.select(branches, { prompt = "Select branch for diff:" }, function(branch_name)
+        if branch_name then
+          vim.cmd("Gitsigns diffthis " .. branch_name .. " --vertical")
         end
       end)
     end,
-    desc = "Git commit",
+    desc = "Diff with branch",
     mode = "n",
   },
   {
-    -- Keybinding for pushing the current branch with Fugitive
-    "<leader>gP",
-    "<cmd>Git push<cr>",
-    desc = "Git push",
+    "<leader>ghc",
+    function()
+      local commits = vim.fn.systemlist("git log --pretty=format:'%h - %s' -- " .. vim.fn.expand("%:p"))
+      vim.ui.select(commits, { prompt = "Select commit:" }, function(commit)
+        if commit then
+          -- Extract the commit hash from the selected commit
+          local commit_hash = commit:match("^(%S+)")
+          if commit_hash then
+            vim.cmd("Gitsigns diffthis " .. commit_hash .. " --vertical")
+          end
+        end
+      end)
+    end,
+    desc = "Diff with commit",
+    mode = "n",
+  },
+
+  -- GitConflict
+  {
+    "<leader>gx",
+    group = "Git Conflict",
+    icon = "",
+  },
+  {
+    "<leader>gxl",
+    "<cmd>GitConflictListQf<cr>",
+    desc = "List Conflicts",
+    mode = "n",
+  },
+  {
+    "<leader>gxo",
+    "<cmd>GitConflictChooseOurs<cr>",
+    desc = "Accept Ours",
+    mode = "n",
+  },
+  {
+    "<leader>gxt",
+    "<cmd>GitConflictChooseTheirs<cr>",
+    desc = "Accept Theirs",
+    mode = "n",
+  },
+  {
+    "<leader>gxb",
+    "<cmd>GitConflictChooseBoth<cr>",
+    desc = "Accept Both",
     mode = "n",
   },
 })
