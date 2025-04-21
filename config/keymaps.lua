@@ -1,6 +1,7 @@
 local wk = require("which-key")
 
 wk.add({
+  -- Restore last closed buffer
   {
     "<leader>bt",
     "<cmd>b#<cr>",

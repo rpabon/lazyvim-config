@@ -1,5 +1,5 @@
 return {
-  -- Load catpuccion theme
+  -- Load colorscheme
   {
     "LazyVim/LazyVim",
     opts = {
@@ -37,7 +37,17 @@ return {
   },
 
   -- Cursor movement
-  { "chrisgrieser/nvim-spider", lazy = true },
+  {
+    "chrisgrieser/nvim-spider",
+    config = function()
+      -- No additional configuration is required by default
+      -- You can map Spider motions as needed
+      vim.keymap.set({ "n", "o", "x" }, "w", "<cmd>lua require('spider').motion('w')<CR>")
+      vim.keymap.set({ "n", "o", "x" }, "e", "<cmd>lua require('spider').motion('e')<CR>")
+      vim.keymap.set({ "n", "o", "x" }, "b", "<cmd>lua require('spider').motion('b')<CR>")
+      vim.keymap.set({ "n", "o", "x" }, "ge", "<cmd>lua require('spider').motion('ge')<CR>")
+    end,
+  },
 
   -- Git line blame
   {
